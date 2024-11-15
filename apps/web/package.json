@@ -4,24 +4,38 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
-    "build": "next build",
+    "lint": "next lint",
+    "build": "yarn prisma && next build",
     "start": "next start",
-    "lint": "next lint"
+    "prisma": "./generate_prisma_client.sh"
   },
   "dependencies": {
-    "@repo/ui": "workspace:*",
-    "next": "14.2.6",
-    "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "@clerk/nextjs": "^6.3.4",
+    "@daily-co/daily-js": "^0.65.0",
+    "@daily-co/daily-react": "^0.19.0",
+    "@repo/db": "*",
+    "@repo/ui": "*",
+    "jotai": "^2.6.0",
+    "lucide-react": "^0.460.0",
+    "next": "^14.1.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-loader-spinner": "^6.1.6",
+    "recoil": "^0.7.7",
+    "sonner": "^1.7.0",
+    "tailwindcss": "^3.4.15",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
+    "@repo/eslint-config": "*",
+    "@repo/typescript-config": "*",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "autoprefixer": "^10.4.20",
     "eslint": "^8",
     "eslint-config-next": "14.2.6",
+    "postcss": "^8.4.49",
     "typescript": "5.5.4"
   }
 }

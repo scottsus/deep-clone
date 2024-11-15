@@ -1,19 +1,26 @@
 {
-  "name": "my-turborepo",
+  "name": "turbo",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "build": "turbo build"
   },
+  "dependencies": {},
   "devDependencies": {
-    "prettier": "^3.2.5",
-    "turbo": "^2.0.7",
+    "@ianvs/prettier-plugin-sort-imports": "^4.4.0",
+    "prettier": "^3.3.3",
+    "prettier-plugin-tailwindcss": "^0.6.8",
+    "turbo": "^2.3.0",
     "typescript": "5.5.4"
   },
-  "packageManager": "pnpm@8.15.6",
   "engines": {
-    "node": ">=18"
-  }
+    "node": ">=18 <=20"
+  },
+  "packageManager": "yarn@1.22.22"
 }

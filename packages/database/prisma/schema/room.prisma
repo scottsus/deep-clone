@@ -1,0 +1,20 @@
+model Room {
+    id       String    @id @default(uuid())
+    messages Message[]
+}
+
+model Message {
+    id      String @id @default(uuid())
+    roomId  String @map("room_id")
+    role    Role
+    time    Float
+    content String
+    room    Room   @relation(fields: [roomId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    @@index([roomId])
+}
+
+enum Role {
+    GUEST
+    CLONE
+}
