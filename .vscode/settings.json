@@ -1,0 +1,19 @@
+{
+  // For annoying yellow squiggly lines on imports
+  // Might need to edit accordingly
+  "python.analysis.extraPaths": [
+    "./apps/fastapi/.venv/Lib/python3.10/site-packages"
+  ],
+
+  // Install through vscode:
+  // Black Formatter - ms-python
+  // isort - ms-python
+  "editor.formatOnSave": true,
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "always"
+    }
+  },
+  "isort.args": ["--profile", "black"]
+}

@@ -1,6 +1,6 @@
-# PyTS Prisma Turborepo 🏎️
+# Next15-Tailwindcss-FastAPI-Prisma-Turbo 🏎️
 
-Lightweight Next 15 frontend, FastAPI server, shared Prisma ORM, and excellent dev tooling. Everything you need to start your next failed side project.
+Lightweight Next 15 frontend, FastAPI server, shared Prisma ORM, and excellent dev tooling. Fully configured `tailwindcss`, `typescript`, and `.env` files. Everything you need to start your next failed side project.
 
 ## Quick Start
 
@@ -20,11 +20,14 @@ Oftentimes a Next.js frontend will call Python libraries, which may influence st
 1. tailwindcss
 2. Shadcn UI
 3. @clerk/nextjs
+4. Prisma
 
 ### FastAPI
 
-1. ffmpeg
-2. @TODO
+1. async/await FastAPI
+2. Docker
+3. Docker compose -> hot reload
+4. Prisma
 
 ### AI
 
@@ -55,3 +58,9 @@ Oftentimes a Next.js frontend will call Python libraries, which may influence st
 - `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
 - `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
 - `@repo/tailwind-config`: `tailwind.config.ts` well-placed so you don't have to figure out where to place it
+
+## Future improvements
+
+1. Postgres
+2. ffmpeg
+3. TODO
