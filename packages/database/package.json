@@ -4,6 +4,14 @@
   "exports": {
     ".": "./src/index.ts"
   },
+  "scripts": {
+    "db:pull": "prisma db pull",
+    "db:push": "prisma db push",
+    "db:generate": "prisma db generate",
+    "db:studio": "prisma studio",
+    "db:migrate": "prisma migrate deploy",
+    "db:reset": "prisma db reset"
+  },
   "dependencies": {
     "@prisma/client": "^5.22.0"
   },

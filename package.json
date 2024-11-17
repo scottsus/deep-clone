@@ -9,13 +9,7 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "build": "turbo build",
-    "db:pull": "prisma db pull",
-    "db:push": "prisma db push",
-    "db:generate": "prisma db generate",
-    "db:studio": "prisma studio",
-    "db:migrate": "prisma migrate deploy",
-    "db:reset": "prisma db reset"
+    "build": "turbo build"
   },
   "dependencies": {},
   "devDependencies": {
