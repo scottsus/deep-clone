@@ -1,8 +1,6 @@
 services:
-  web:
+  server:
     build:
       context: ./../..
       dockerfile: apps/fastapi/Dockerfile
-    ports:
-      - 8000-9000:8000
     restart: always

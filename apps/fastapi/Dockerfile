@@ -14,6 +14,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY apps/fastapi .
 
-EXPOSE 8000
+EXPOSE 8042
 
-CMD ["uvicorn", "app.main:api_router", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.main:api_router", "--reload", "--host", "0.0.0.0", "--port", "8042"]

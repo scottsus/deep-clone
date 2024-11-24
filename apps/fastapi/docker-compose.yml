@@ -8,5 +8,5 @@ services:
     volumes: # hot reload
       - .:/app/apps/fastapi
     ports:
-      - 8000:8000
+      - 8042:8042
     restart: always
