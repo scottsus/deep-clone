@@ -1,8 +1,34 @@
+model Clone {
+    id            String @id @default(uuid())
+    firstName     String
+    lastName      String
+    userAlias     String
+    knowledgeBank String
+    intro         String
+    outro         String
+    Room          Room[]
+}
+
+model Guest {
+    id              String  @id @default(uuid())
+    firstName       String
+    lastName        String
+    email           String?
+    linkedInProfile String?
+    relation        String?
+    Room            Room[]
+}
+
 model Room {
-    id        String    @id @default(uuid())
-    userAlias String
-    guestName String
-    messages  Message[]
+    id       String    @id @default(uuid())
+    cloneId  String
+    guestId  String
+    clone    Clone     @relation(fields: [cloneId], references: [id])
+    guest    Guest     @relation(fields: [guestId], references: [id])
+    messages Message[]
+
+    @@index([cloneId])
+    @@index([guestId])
 }
 
 model Message {

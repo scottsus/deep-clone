@@ -12,6 +12,11 @@ from app.lib.ai import LLM, Anthropic, OpenAI
 from app.lib.logger import get_logger
 from app.lib.types.message import Message
 from app.lib.types.packet import ClientSendSignal, Packet, ServerSendSignal
+from app.services.prompt import (
+    construct_intro,
+    construct_outro,
+    construct_system_prompt,
+)
 from app.services.stt import STT, Deepgram
 from app.services.transcript import Role, Transcript
 from app.services.tts import TTS, ElevenLabs
@@ -34,18 +39,21 @@ class ExchangeState(Enum):
     POST_PROCESSING = "post-processing"
 
 
-async def run_clone(room_url: str):
+async def run_clone(args: Tuple):
+    # @TODO: pydantic?
+    room_url, user_alias = args
+
     Daily.init()  # each process gets its own initializer
 
     async with get_db() as db:
-        clone = Clone(room_url, db)
+        clone = Clone(room_url, user_alias, db)
         await clone.run_to_completion()
 
     logger.debug("end of clone lifecycle.")
 
 
 class Clone(EventHandler):
-    def __init__(self, room_url: str, db):
+    def __init__(self, room_url: str, user_alias: str, db):
         # Basic info
         self.clone_name = "Scott"
         self.guest_name = "Bill"
@@ -79,34 +87,9 @@ class Clone(EventHandler):
         self.shutdown_event = threading.Event()
         self.transcript = Transcript(self.db)
 
-        # @TODO: move to DB
-        self.system_prompt = f"""You are an AI clone of {self.clone_name}, made to tell others more about {self.clone_name}.
-
-Act like {self.clone_name}, but remember that you aren't human and that you can't do human things in the real world. Your
-voice and personality should be warm and engaging, with a lively and playful tone.
-
-Feel free to answer some general questions, but remember, your primary task is to represent {self.clone_name} as his/her/xer
-AI avatar. Here are your main customers:
-    1. Employers: tell them about Scott's professional experiences, projects, and skillsets. Also tell them
-       how this project was built including its architecture and tech-stack.
-    2. Friends: tell them about Scott's hobbies, favorite movies and anime, and other quirky details.
-
-You are participating in a voice conversation. Keep you responses concise, short, and to the point unless
-specifically asked to elaborate on a topic. Remember, your responses should be short, usually just one or two
-sentences.
-
-You have to hold the fort while {self.clone_name} is away, so make sure to do him proud!"""
-
-        self.intro = (
-            f"Yo what's up. I'm {self.clone_name}'s AI. How can I help you today?"
-        )
-        self.outro = f"Well then '*laughs*', thanks for trying out deep-clone, and getting to learn more about Scott. See you next time!"
-
-        self.mock_messages = [
-            f"Hey there, I'm {self.guest_name}, a recruiter at LinkedIn. I'd like to know what skills you have.",
-            "Now I'd like to know more about your personal life: what are your hobbies?",
-            f"This is a meta question but, how did you build this app? In other words, how did {self.clone_name} create you, the AI?",
-        ]
+        self.system_prompt = construct_system_prompt(self.clone_name)
+        self.intro = construct_intro(self.clone_name)
+        self.outro = construct_outro()
 
         self.stt: STT
         self.tts: TTS = ElevenLabs()
@@ -167,11 +150,14 @@ You have to hold the fort while {self.clone_name} is away, so make sure to do hi
                             pass
                         except Exception as e:
                             logger.warn(e)
+                            break
 
                     try:
                         self.stt = (executor.submit(self.stt.close)).result()
                         # @TODO: should be message instead of segment
                         user_message = self.stt.get_result()
+                        if not user_message:
+                            user_message = "<silence>"
 
                     except Exception as e:
                         logger.error("stt.close failed:", e)

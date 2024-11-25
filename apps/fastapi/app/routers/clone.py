@@ -16,8 +16,10 @@ async def dial_clone(req: Request, bg_tasks: BackgroundTasks):
 
     data = await req.json()
     room_url = data.get("room_url")
+    # user_alias = data.get("user_alias")
+    user_alias = "scottsus"
 
     async with Pool() as pool:
-        await pool.map(run_clone, [room_url])
+        await pool.map(run_clone, [(room_url, user_alias)])
 
     return {"message": "dial_clone success"}
