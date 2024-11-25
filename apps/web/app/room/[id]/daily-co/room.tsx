@@ -38,7 +38,7 @@ export function DailyRoom({
         dialClone({ roomUrl: url });
       })
       .then(async () => {
-        const delay = 2000;
+        const delay = 5000;
         await sleep(delay);
         const packet: Packet = {
           signal: ClientSendSignal.GUEST_JOINED_SUCCESS,
