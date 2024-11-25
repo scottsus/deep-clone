@@ -29,7 +29,6 @@ export default function Gate({ userAlias }: { userAlias: string }) {
       lastName,
     };
 
-    console.log("Hello server");
     const roomId = await createRoomInDb({
       userAlias,
       guest,

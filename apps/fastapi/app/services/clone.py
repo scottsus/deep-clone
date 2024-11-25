@@ -98,7 +98,11 @@ class Clone(EventHandler):
     async def run_to_completion(self):
         try:
             logger.info("waiting for guest to join successfully...")
-            self.guest_joined_event.wait()
+            timeout_duration = 30.0
+            guest_joined_successfully = self.guest_joined_event.wait(timeout_duration)
+            if not guest_joined_successfully:
+                logger.error("guest failed to join")
+                return
 
             # guest has joined!
             logger.info("clone start 🏎️")
@@ -265,6 +269,20 @@ class Clone(EventHandler):
             logger.error(e)
             raise
 
+    def send_handshake_ack(self):
+        logger.debug("completing handshake")
+
+        try:
+            self.call_client.send_app_message(
+                message=Packet(
+                    signal=ServerSendSignal.GUEST_JOINED_SUCCESS_ACK
+                ).model_dump_json()
+            )
+
+        except Exception as e:
+            logger.error(e)
+            raise
+
     def send_transcript_message(self, packet: Packet):
         logger.debug(f"sending message: {packet.message}")
 
@@ -324,6 +342,8 @@ class Clone(EventHandler):
         """Callback from EventHandler"""
         try:
             if message["signal"] == ClientSendSignal.GUEST_JOINED_SUCCESS.name:
+                logger.critical("received client ack")
+                self.send_handshake_ack()
                 self.guest_joined_event.set()
                 logger.debug("guest joined successfully")
 

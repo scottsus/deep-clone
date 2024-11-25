@@ -1,7 +1,7 @@
 import { DailyCall } from "@daily-co/daily-js";
 import { ClientSendSignal, Packet } from "~/lib/types/packet";
 import { sleep } from "~/lib/utils";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 
 import { createRoom, dialClone } from "./api";
 import { Audio } from "./audio";
@@ -19,14 +19,28 @@ export function DailyRoom({
   setRoomUrl: (url: string) => void;
   videoEnabled?: boolean;
 }) {
-  const { sendAppMessage } = useRoomStatus();
+  const { sendAppMessage, handshakeIsCompleteRef } = useRoomStatus();
+  const performHandshake = useCallback(async () => {
+    const delay = 1000;
+    const maxIterations = 30;
+    for (let i = 0; i < maxIterations; i++) {
+      if (handshakeIsCompleteRef.current) {
+        console.log("handshake complete");
+        break;
+      }
+      const packet: Packet = {
+        signal: ClientSendSignal.GUEST_JOINED_SUCCESS,
+      };
+      sendAppMessage(packet);
+      await sleep(delay);
+    }
+  }, [sendAppMessage]);
 
   useEffect(() => {
     if (!callObject) {
       return;
     }
 
-    // callObject.startCamera().then()...
     createRoom()
       .then(async ({ url }) => {
         await callObject.join({ url: url });
@@ -37,18 +51,8 @@ export function DailyRoom({
       .then((url) => {
         dialClone({ roomUrl: url });
       })
-      .then(async () => {
-        // @TODO: best effort broadcasting
-        const delay = 1000;
-        const maxIterations = 30;
-        for (let i = 0; i < maxIterations; i++) {
-          const packet: Packet = {
-            signal: ClientSendSignal.GUEST_JOINED_SUCCESS,
-          };
-          sendAppMessage(packet);
-          console.log("sent", packet);
-          await sleep(delay);
-        }
+      .then(() => {
+        performHandshake();
       });
   }, [callObject]);
 
