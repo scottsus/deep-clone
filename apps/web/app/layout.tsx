@@ -7,8 +7,8 @@ import { type Metadata } from "next";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "Some Title",
-  description: "Some description",
+  title: "Deep Clone",
+  description: "Conversational voice cloning",
   icons: [{ rel: "icon", url: "/github.svg" }],
 };
 

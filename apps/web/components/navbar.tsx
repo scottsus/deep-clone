@@ -9,7 +9,7 @@ export function Navbar() {
     <div className="flex w-5/6 items-center justify-between p-6">
       <Link
         className="cursor-pointer transition-all hover:opacity-80"
-        href="https://github.com/scottsus/"
+        href="https://github.com/scottsus/deep-clone"
         target="_blank"
       >
         <Image src={github} alt="GitHub" width={50} height={50} />

@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import threading
 from concurrent.futures import ThreadPoolExecutor
@@ -113,6 +114,9 @@ You have to hold the fort while {self.clone_name} is away, so make sure to do hi
     async def run_to_completion(self):
         try:
             logger.info("clone start 🏎️")
+
+            delay = 1.5
+            await asyncio.sleep(delay)
 
             # send welcome message
             self.speak(self.intro)

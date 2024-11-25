@@ -13,8 +13,6 @@ export function EndResponseButton() {
   const [participantId] = useParticipantIds({ filter: "remote" });
 
   const { speakingExchangeState, setSpeakingExchangeState } = useRoomStatus();
-  const isVisible =
-    speakingExchangeState === SpeakingExchangeState.GUEST_SPEAKING;
   const [isDisabled, setIsDisabled] = useState(true);
 
   const sendAppMessage = useAppMessage();
@@ -23,10 +21,6 @@ export function EndResponseButton() {
   }, [participantId, sendAppMessage]);
 
   useEffect(() => {
-    if (!isVisible) {
-      setIsDisabled(true);
-    }
-
     // just a small pause before
     const timeoutId = setTimeout(() => {
       setIsDisabled(false);
@@ -44,13 +38,11 @@ export function EndResponseButton() {
       clearTimeout(timeoutId);
       document.removeEventListener("keydown", handleSpacebarClick);
     };
-  }, [speakingExchangeState, isVisible, isDisabled, sendSpeechEnd]);
+  }, [speakingExchangeState, isDisabled, sendSpeechEnd]);
 
   return (
     <div
-      className={`mx-auto mb-4 mt-auto flex cursor-pointer flex-row items-center space-x-2 rounded-xl px-4 py-2 transition-all hover:px-5 ${
-        isVisible ? "bg-violet-400" : "bg-white"
-      } ${isDisabled ? "opacity-50" : "opacity-100"}`}
+      className={`mx-auto mb-4 mt-auto flex cursor-pointer flex-row items-center space-x-2 rounded-xl bg-violet-400 px-4 py-2 transition-all hover:px-5 ${isDisabled ? "opacity-50" : "opacity-100"}`}
       onClick={() => {
         !isDisabled && sendSpeechEnd();
       }}
