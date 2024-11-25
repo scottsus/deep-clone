@@ -21,6 +21,12 @@ export function EndResponseButton() {
   }, [participantId, sendAppMessage]);
 
   useEffect(() => {
+    if (speakingExchangeState !== SpeakingExchangeState.GUEST_SPEAKING) {
+      setIsDisabled(true);
+    } else {
+      setIsDisabled(false);
+    }
+
     // just a small pause before
     const timeoutId = setTimeout(() => {
       setIsDisabled(false);

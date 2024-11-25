@@ -115,8 +115,12 @@ You have to hold the fort while {self.clone_name} is away, so make sure to do hi
         try:
             logger.info("clone start 🏎️")
 
+            self.speak("this is before delay")
+
             delay = 1.5
             await asyncio.sleep(delay)
+
+            self.speak("this is after delay")
 
             # send welcome message
             self.speak(self.intro)

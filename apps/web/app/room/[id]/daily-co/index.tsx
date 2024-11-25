@@ -23,12 +23,9 @@ export function DailyRoom({
       return;
     }
 
-    callObject
-      .startCamera()
-      .then(() => createRoom())
+    // callObject.startCamera().then()...
+    createRoom()
       .then(({ url }) => {
-        console.log("Joining", url);
-
         callObject.join({ url: url });
         setRoomUrl(url);
 

@@ -14,15 +14,6 @@ export function Navbar() {
       >
         <Image src={github} alt="GitHub" width={50} height={50} />
       </Link>
-
-      <SignedOut>
-        <SignInButton>
-          <Button>Sign In</Button>
-        </SignInButton>
-      </SignedOut>
-      <SignedIn>
-        <UserButton />
-      </SignedIn>
     </div>
   );
 }
