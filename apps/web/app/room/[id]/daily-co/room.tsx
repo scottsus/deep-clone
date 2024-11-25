@@ -38,12 +38,17 @@ export function DailyRoom({
         dialClone({ roomUrl: url });
       })
       .then(async () => {
-        const delay = 5000;
-        await sleep(delay);
-        const packet: Packet = {
-          signal: ClientSendSignal.GUEST_JOINED_SUCCESS,
-        };
-        sendAppMessage(packet);
+        // @TODO: best effort broadcasting
+        const delay = 1000;
+        const maxIterations = 30;
+        for (let i = 0; i < maxIterations; i++) {
+          const packet: Packet = {
+            signal: ClientSendSignal.GUEST_JOINED_SUCCESS,
+          };
+          sendAppMessage(packet);
+          console.log("sent", packet);
+          await sleep(delay);
+        }
       });
   }, [callObject]);
 
