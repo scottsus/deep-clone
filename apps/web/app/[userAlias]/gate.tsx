@@ -1,5 +1,6 @@
 "use client";
 
+import { Prisma } from "@prisma/client";
 import { Button } from "@repo/ui/button";
 import {
   Card,
@@ -20,13 +21,18 @@ export default function Gate({ userAlias }: { userAlias: string }) {
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const firstName = e.currentTarget.firstName.value ?? "John";
-    const lastName = e.currentTarget.lastName.value ?? "Doe";
+    const firstName: string = e.currentTarget.firstName.value ?? "John";
+    const lastName: string = e.currentTarget.lastName.value ?? "Doe";
+
+    const guest: Prisma.GuestCreateInput = {
+      firstName,
+      lastName,
+    };
 
     console.log("Hello server");
     const roomId = await createRoomInDb({
       userAlias,
-      guestName: `${firstName} ${lastName}`,
+      guest,
     });
 
     router.push(`/room/${roomId}`);
