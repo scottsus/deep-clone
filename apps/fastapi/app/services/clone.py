@@ -11,7 +11,7 @@ from app.db import get_db
 from app.lib.ai import LLM, Anthropic, OpenAI
 from app.lib.logger import get_logger
 from app.lib.types.message import Message
-from app.lib.types.packet import Packet, ServerSendSignal
+from app.lib.types.packet import ClientSendSignal, Packet, ServerSendSignal
 from app.services.stt import STT, Deepgram
 from app.services.transcript import Role, Transcript
 from app.services.tts import TTS, ElevenLabs
@@ -72,6 +72,7 @@ class Clone(EventHandler):
         self.microphone = microphone
 
         # Call status
+        self.guest_joined_event = threading.Event()
         self.audio_data_queue: Queue[Tuple[bytes, bool]] = Queue()
         self.exchange_state = ExchangeState.IDLE
         self.is_in_conversation = True
@@ -113,14 +114,14 @@ You have to hold the fort while {self.clone_name} is away, so make sure to do hi
 
     async def run_to_completion(self):
         try:
+            logger.info("waiting for guest to join successfully...")
+            self.guest_joined_event.wait()
+
+            # guest has joined!
             logger.info("clone start 🏎️")
 
-            self.speak("this is before delay")
-
-            delay = 1.5
+            delay = 0.5
             await asyncio.sleep(delay)
-
-            self.speak("this is after delay")
 
             # send welcome message
             self.speak(self.intro)
@@ -327,7 +328,7 @@ You have to hold the fort while {self.clone_name} is away, so make sure to do hi
         try:
             participant_id = participant["id"]
             self.call_client.set_audio_renderer(participant_id, self.on_audio_data)
-            logger.info(f"participant with id [{participant_id}] has joined the room.")
+            logger.info(f"guest with id [{participant_id}] has joined the room.")
 
         except Exception as e:
             logger.error(e)
@@ -336,12 +337,13 @@ You have to hold the fort while {self.clone_name} is away, so make sure to do hi
     def on_app_message(self, message: Any, _: str):
         """Callback from EventHandler"""
         try:
-            if (
-                self.exchange_state == ExchangeState.LISTENING
-                and message["type"] == "speechend"
-            ):
-                logger.debug("received 'speechend' signal")
-                self.exchange_state = ExchangeState.SPEAKING
+            if message["signal"] == ClientSendSignal.GUEST_JOINED_SUCCESS.name:
+                self.guest_joined_event.set()
+                logger.debug("guest joined successfully")
+
+            elif message["signal"] == ClientSendSignal.GUEST_SPEECH_END.name:
+                if self.exchange_state == ExchangeState.LISTENING:
+                    self.exchange_state = ExchangeState.SPEAKING
 
         except Exception as e:
             logger.warn(e)

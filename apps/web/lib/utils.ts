@@ -1,3 +1,7 @@
+export async function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export function formatTime(msFromEpoch: number): string {
   const seconds = Math.floor(msFromEpoch / 1000);
   const hours = Math.floor(seconds / 3600);

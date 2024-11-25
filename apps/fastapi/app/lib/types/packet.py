@@ -8,13 +8,14 @@ from pydantic import BaseModel
 
 
 class ClientSendSignal(Enum):
-    pass
+    GUEST_JOINED_SUCCESS = "GUEST_JOINED_SUCCESS"
+    GUEST_SPEECH_END = "GUEST_SPEECH_END"
 
 
 class ServerSendSignal(Enum):
-    TRANSCRIPT_UPDATE = "transcript_update"
-    CLONE_SPEECH_END = "clone_speech_end"
-    CONVERSATION_END = "conversation_end"
+    TRANSCRIPT_UPDATE = "TRANSCRIPT_UPDATE"
+    CLONE_SPEECH_END = "CLONE_SPEECH_END"
+    CONVERSATION_END = "CONVERSATION_END"
 
 
 class Packet(BaseModel):

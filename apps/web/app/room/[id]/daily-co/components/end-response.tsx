@@ -1,6 +1,7 @@
 "use client";
 
 import { useAppMessage, useParticipantIds } from "@daily-co/daily-react";
+import { ClientSendSignal, Packet } from "~/lib/types/packet";
 import { SpaceIcon } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 
@@ -17,7 +18,10 @@ export function EndResponseButton() {
 
   const sendAppMessage = useAppMessage();
   const sendSpeechEnd = useCallback(() => {
-    sendAppMessage({ type: "speechend" });
+    const packet: Packet = {
+      signal: ClientSendSignal.GUEST_SPEECH_END,
+    };
+    sendAppMessage(packet);
   }, [participantId, sendAppMessage]);
 
   useEffect(() => {
