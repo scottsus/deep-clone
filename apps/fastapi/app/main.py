@@ -1,13 +1,11 @@
 from app.db import lifespan
 from app.routers import clone, users
-from daily import Daily
 from dotenv import load_dotenv
 from fastapi import FastAPI
 
 load_dotenv()
 
 api_router = FastAPI(lifespan=lifespan)
-# Daily.init()
 
 
 @api_router.get("/")

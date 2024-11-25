@@ -14,7 +14,7 @@ from app.lib.types.packet import Packet, ServerSendSignal
 from app.services.stt import STT, Deepgram
 from app.services.transcript import Role, Transcript
 from app.services.tts import TTS, ElevenLabs
-from daily import CallClient, Daily, EventHandler, VirtualMicrophoneDevice
+from daily import CallClient, Daily, EventHandler
 from pydantic import BaseModel
 
 logger = get_logger(__name__, logging.DEBUG)
@@ -114,9 +114,6 @@ You have to hold the fort while {self.clone_name} is away, so make sure to do hi
         try:
             logger.info("clone start 🏎️")
 
-            # write the conversation record
-            await self.transcript.init_db()
-
             # send welcome message
             self.speak(self.intro)
 
@@ -134,6 +131,7 @@ You have to hold the fort while {self.clone_name} is away, so make sure to do hi
                     ),
                 )
             )
+            self.notify_speech_end()
 
             # back and forth talking
             while self.is_in_conversation:
@@ -190,6 +188,7 @@ You have to hold the fort while {self.clone_name} is away, so make sure to do hi
                     # Respond
                     clone_response = self.think_of_response()
                     clone_message = clone_response.message
+                    # @TODO: update speaking status before actually speaking
                     self.speak(clone_message)
 
                     # Bookkeeping clone info
@@ -207,6 +206,7 @@ You have to hold the fort while {self.clone_name} is away, so make sure to do hi
                             ),
                         )
                     )
+                    self.notify_speech_end()
                     logger.info(f"[{self.clone_name}]: {clone_message}")
 
                     if clone_response.conversation_is_over:
@@ -214,6 +214,7 @@ You have to hold the fort while {self.clone_name} is away, so make sure to do hi
 
             # end of conversation
             # self.speak(self.outro)
+            self.notify_conversation_end()
 
             # post-processing and cleanup jobs
             await self.transcript.upload_transcript()
@@ -274,6 +275,33 @@ You have to hold the fort while {self.clone_name} is away, so make sure to do hi
 
         try:
             self.call_client.send_app_message(message=packet.model_dump_json())
+
+        except Exception as e:
+            logger.error(e)
+            raise
+
+    def notify_speech_end(self):
+        logger.debug("notifying end of speech")
+
+        try:
+            self.call_client.send_app_message(
+                message=Packet(
+                    signal=ServerSendSignal.CLONE_SPEECH_END
+                ).model_dump_json()
+            )
+        except Exception as e:
+            logger.error(e)
+            raise
+
+    def notify_conversation_end(self):
+        logger.debug("notifying end of conversation")
+
+        try:
+            self.call_client.send_app_message(
+                message=Packet(
+                    signal=ServerSendSignal.CONVERSATION_END
+                ).model_dump_json()
+            )
 
         except Exception as e:
             logger.error(e)

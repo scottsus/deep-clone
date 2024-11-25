@@ -1,6 +1,8 @@
 model Room {
-    id       String    @id @default(uuid())
-    messages Message[]
+    id        String    @id @default(uuid())
+    userAlias String
+    guestName String
+    messages  Message[]
 }
 
 model Message {

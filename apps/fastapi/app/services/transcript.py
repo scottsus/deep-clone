@@ -23,17 +23,6 @@ class Transcript:
         self.messages: List[Message] = []
         self.db = db
 
-    async def init_db(self) -> Message:
-        try:
-            new_room = await self.db.room.create(data={})
-            self.room_id = new_room.id
-            logger.info("initialized conversation in db")
-
-            return new_room
-
-        except Exception as e:
-            logger.error(f"unable to initialize conversatB7ion in db: {e}")
-
     def get(self) -> List[Message]:
         return self.messages
 

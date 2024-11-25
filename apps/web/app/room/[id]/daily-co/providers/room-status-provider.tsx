@@ -2,7 +2,14 @@ import type { DailyEventObjectAppMessage } from "@daily-co/daily-js";
 import { useAppMessage } from "@daily-co/daily-react";
 import { Message } from "~/lib/types/message";
 import { ServerSendSignal, type Packet } from "~/lib/types/packet";
-import { createContext, useCallback, useContext, useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 /**
  * Not to be confused with server-side ExchangeState,
@@ -21,6 +28,9 @@ export enum SpeakingExchangeState {
 interface RoomStatusInterface {
   transcript: Message[];
   speakingExchangeState: SpeakingExchangeState;
+  setSpeakingExchangeState: React.Dispatch<
+    React.SetStateAction<SpeakingExchangeState>
+  >;
   sendAppMessage: any; // no export from @daily-co
 }
 
@@ -33,20 +43,34 @@ export function RoomStatusProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+
   const [transcript, setTranscript] = useState<Message[]>([]);
   const [speakingExchangeState, setSpeakingExchangeState] = useState(
     SpeakingExchangeState.IDLE,
   );
+  const [conversationIsOngoing, setConversationIsOngoing] = useState(true);
+
   const onAppMessage = useCallback((ev: DailyEventObjectAppMessage<any>) => {
     try {
       const packet: Packet = JSON.parse(ev.data);
-      console.log("=======PACKET:", packet);
       switch (packet.signal) {
         case ServerSendSignal.TRANSCRIPT_UPDATE:
-          if (packet.message) {
-            // @TODO: I don't know why non-null assertion operator is needed here
-            setTranscript((prev) => [...prev, packet.message!]);
+          const { message } = packet;
+          if (message) {
+            setTranscript((prev) => [...prev, message]);
           }
+          // @TODO: don't use this as end-state of clone
+          // transcript usually comes after the speech ends
+          setSpeakingExchangeState(SpeakingExchangeState.CLONE_SPEAKING);
+          break;
+
+        case ServerSendSignal.CLONE_SPEECH_END:
+          setSpeakingExchangeState(SpeakingExchangeState.GUEST_SPEAKING);
+          break;
+
+        case ServerSendSignal.CONVERSATION_END:
+          setConversationIsOngoing(false);
           break;
       }
     } catch (err) {
@@ -55,9 +79,20 @@ export function RoomStatusProvider({
   }, []);
   const sendAppMessage = useAppMessage({ onAppMessage });
 
+  useEffect(() => {
+    if (!conversationIsOngoing) {
+      router.push(`/call-complete`);
+    }
+  }, [conversationIsOngoing]);
+
   return (
     <RoomStatusContext.Provider
-      value={{ transcript, speakingExchangeState, sendAppMessage }}
+      value={{
+        transcript,
+        speakingExchangeState,
+        setSpeakingExchangeState,
+        sendAppMessage,
+      }}
     >
       {children}
     </RoomStatusContext.Provider>

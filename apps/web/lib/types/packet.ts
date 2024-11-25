@@ -8,6 +8,8 @@ export enum ClientSendSignal {}
 
 export enum ServerSendSignal {
   TRANSCRIPT_UPDATE = "transcript_update",
+  CLONE_SPEECH_END = "clone_speech_end",
+  CONVERSATION_END = "conversation_end",
 }
 
 export interface Packet {

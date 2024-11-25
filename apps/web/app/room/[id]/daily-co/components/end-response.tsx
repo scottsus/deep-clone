@@ -4,42 +4,55 @@ import { useAppMessage, useParticipantIds } from "@daily-co/daily-react";
 import { SpaceIcon } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 
+import {
+  SpeakingExchangeState,
+  useRoomStatus,
+} from "../providers/room-status-provider";
+
 export function EndResponseButton() {
-  const [disabled, setDisabled] = useState(true);
   const [participantId] = useParticipantIds({ filter: "remote" });
+
+  const { speakingExchangeState, setSpeakingExchangeState } = useRoomStatus();
+  const isVisible =
+    speakingExchangeState === SpeakingExchangeState.GUEST_SPEAKING;
+  const [isDisabled, setIsDisabled] = useState(true);
 
   const sendAppMessage = useAppMessage();
   const sendSpeechEnd = useCallback(() => {
     sendAppMessage({ type: "speechend" });
-    console.log("sent app message");
   }, [participantId, sendAppMessage]);
 
   useEffect(() => {
+    if (!isVisible) {
+      setIsDisabled(true);
+    }
+
+    // just a small pause before
     const timeoutId = setTimeout(() => {
-      setDisabled(false);
+      setIsDisabled(false);
     }, 1500);
 
     const handleSpacebarClick = (event: KeyboardEvent) => {
-      if (event.code === "Space" && !disabled) {
+      if (event.code === "Space" && !isDisabled) {
         sendSpeechEnd();
+        setSpeakingExchangeState(SpeakingExchangeState.CLONE_THINKING);
       }
     };
-
     document.addEventListener("keydown", handleSpacebarClick);
 
     return () => {
       clearTimeout(timeoutId);
       document.removeEventListener("keydown", handleSpacebarClick);
     };
-  }, [disabled, sendSpeechEnd]);
+  }, [speakingExchangeState, isVisible, isDisabled, sendSpeechEnd]);
 
   return (
     <div
-      className={`mx-auto mb-4 mt-auto flex cursor-pointer flex-row space-x-2 rounded-xl px-4 py-2 duration-300 hover:px-5 max-md:hidden ${
-        disabled ? "bg-[#6484FF] opacity-50" : "bg-[#6484FF]"
-      }`}
+      className={`mx-auto mb-4 mt-auto flex cursor-pointer flex-row items-center space-x-2 rounded-xl px-4 py-2 transition-all hover:px-5 ${
+        isVisible ? "bg-violet-400" : "bg-white"
+      } ${isDisabled ? "opacity-50" : "opacity-100"}`}
       onClick={() => {
-        !disabled && sendSpeechEnd();
+        !isDisabled && sendSpeechEnd();
       }}
     >
       <p className="text-sm font-semibold text-white">End Response</p>

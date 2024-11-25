@@ -10,49 +10,45 @@ import { RoomStatusProvider } from "./providers/room-status-provider";
 import { Transcript } from "./transcript";
 import { Video } from "./video";
 
-const IS_TEST_MODE = false;
-
-export function DailyRoom() {
+export function DailyRoom({
+  videoEnabled = false,
+}: {
+  videoEnabled?: boolean;
+}) {
   const [roomUrl, setRoomUrl] = useState("");
-
   const callObject = useCallObject({});
 
   useEffect(() => {
     if (!callObject) {
-      console.log("Empty callObject");
       return;
     }
 
-    if (!IS_TEST_MODE) {
-      callObject
-        .startCamera()
-        .then(() => createRoom())
-        .then(({ url }) => {
-          console.log("Joining", url);
+    callObject
+      .startCamera()
+      .then(() => createRoom())
+      .then(({ url }) => {
+        console.log("Joining", url);
 
-          callObject.join({ url: url });
-          setRoomUrl(url);
+        callObject.join({ url: url });
+        setRoomUrl(url);
 
-          console.log("Successfully set everything!");
-
-          return url;
-        })
-        .then((url) => {
-          dialClone({ roomUrl: url });
-        });
-    }
+        return url;
+      })
+      .then((url) => {
+        dialClone({ roomUrl: url });
+      });
   }, [callObject]);
 
   return (
     <DailyProvider callObject={callObject} url={roomUrl}>
       <RoomStatusProvider>
-        <div className="flex h-full flex-1 items-center justify-center gap-x-6">
-          <div className="flex w-3/4 flex-col items-center gap-y-4">
-            {!IS_TEST_MODE ? <Video /> : <h1>Video goes here</h1>}
+        <div className="flex h-full w-4/5 flex-1 flex-col items-center justify-around">
+          <div className="flex w-full flex-col items-center gap-y-8">
+            {videoEnabled && <Video />}
             <Audio />
             <EndResponseButton />
           </div>
-          <div className="flex h-full w-1/4 items-center">
+          <div className="flex h-3/4 w-full items-center">
             <Transcript />
           </div>
         </div>

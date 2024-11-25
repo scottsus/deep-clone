@@ -6,14 +6,11 @@ import { useRoomStatus } from "./providers/room-status-provider";
 
 export function Transcript() {
   const { transcript } = useRoomStatus();
-  const username = "Scott";
+  const guestName = "Scott";
   const endOfMessagesRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div
-      className="flex h-3/4 w-full flex-col space-y-3 overflow-x-hidden rounded-lg bg-gray-200 p-4"
-      id="transcriptBox"
-    >
+    <div className="flex size-full flex-col space-y-3 overflow-y-scroll rounded-lg bg-gray-200 p-4">
       <h1 className="mb-10 w-full text-center text-lg font-semibold">
         Transcript
       </h1>
@@ -21,7 +18,7 @@ export function Transcript() {
         return (
           <div className="flex w-full select-none flex-col" key={idx}>
             {m.role === Role.GUEST ? (
-              <p className="font-base ml-auto text-sm">{username}</p>
+              <p className="font-base ml-auto text-sm">{guestName}</p>
             ) : (
               <p className="font-base text-sm">Scott's AI</p>
             )}
