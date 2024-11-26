@@ -19,7 +19,12 @@ async def dial_clone(req: Request, bg_tasks: BackgroundTasks):
     # user_alias = data.get("user_alias")
     user_alias = "scottsus"
 
-    async with Pool() as pool:
-        await pool.map(run_clone, [(room_url, user_alias)])
+    # async with Pool() as pool:
+    #     await pool.map(run_clone, [(room_url, user_alias)])
+    async def multiprocess_runner():
+        async with Pool() as pool:
+            await pool.map(run_clone, [(room_url, user_alias)])
+
+    bg_tasks.add_task(multiprocess_runner)
 
     return {"message": "dial_clone success"}
