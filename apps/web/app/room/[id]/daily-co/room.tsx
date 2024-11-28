@@ -1,4 +1,5 @@
 import { DailyCall } from "@daily-co/daily-js";
+import { Loader } from "@repo/ui/components/ui/";
 import { ClientSendSignal, Packet } from "~/lib/types/packet";
 import { sleep } from "~/lib/utils";
 import { useCallback, useEffect } from "react";
@@ -8,23 +9,20 @@ import { Audio } from "./audio";
 import { EndResponseButton } from "./components/end-response";
 import { useRoomStatus } from "./providers/room-status-provider";
 import { Transcript } from "./transcript";
-import { Video } from "./video";
 
 export function DailyRoom({
   callObject,
   setRoomUrl,
-  videoEnabled = false,
 }: {
   callObject: DailyCall | null;
   setRoomUrl: (url: string) => void;
-  videoEnabled?: boolean;
 }) {
-  const { sendAppMessage, handshakeIsCompleteRef } = useRoomStatus();
+  const { sendAppMessage, handshakeIsComplete } = useRoomStatus();
   const performHandshake = useCallback(async () => {
     const delay = 1000;
     const maxIterations = 30;
     for (let i = 0; i < maxIterations; i++) {
-      if (handshakeIsCompleteRef.current) {
+      if (handshakeIsComplete) {
         console.log("handshake complete");
         break;
       }
@@ -34,7 +32,7 @@ export function DailyRoom({
       sendAppMessage(packet);
       await sleep(delay);
     }
-  }, [sendAppMessage]);
+  }, [sendAppMessage, handshakeIsComplete]);
 
   useEffect(() => {
     if (!callObject) {
@@ -43,7 +41,7 @@ export function DailyRoom({
 
     createRoom()
       .then(async ({ url }) => {
-        await callObject.join({ url: url });
+        await callObject.join({ url: url, startVideoOff: true });
         setRoomUrl(url);
 
         return url;
@@ -58,14 +56,18 @@ export function DailyRoom({
 
   return (
     <div className="flex h-full w-4/5 flex-1 flex-col items-center justify-around">
-      <div className="flex w-full flex-col items-center gap-y-8">
-        {videoEnabled && <Video />}
-        <Audio />
-        <EndResponseButton />
-      </div>
-      <div className="flex h-3/4 w-full items-center">
-        <Transcript />
-      </div>
+      <Loader isLoading={!handshakeIsComplete} />
+      <Audio /> {/** <Audio /> takes awhile to load, so render it first */}
+      {handshakeIsComplete && (
+        <>
+          <div className="flex w-full flex-col items-center gap-y-8">
+            <EndResponseButton />
+          </div>
+          <div className="flex h-3/4 w-full items-center">
+            <Transcript />
+          </div>
+        </>
+      )}
     </div>
   );
 }

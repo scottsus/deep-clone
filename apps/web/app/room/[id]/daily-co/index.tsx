@@ -7,7 +7,11 @@ import { RoomStatusProvider } from "./providers/room-status-provider";
 import { DailyRoom } from "./room";
 
 export function DailyRoomWithProviders() {
-  const callObject = useCallObject({});
+  const callObject = useCallObject({
+    options: {
+      showLocalVideo: false,
+    },
+  });
   const [roomUrl, setRoomUrl] = useState("");
 
   return (

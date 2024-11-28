@@ -1,4 +1,10 @@
-import { Button } from "@repo/ui/button";
+"use client";
+
+import {
+  Button,
+  DrawerContent,
+  DrawerTrigger,
+} from "@repo/ui/components/ui/button";
 import {
   Card,
   CardContent,
@@ -6,7 +12,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@repo/ui/card";
+} from "@repo/ui/components/ui/card";
+import { Drawer } from "@repo/ui/components/ui/drawer";
+import { Loader } from "@repo/ui/components/ui/loader";
 
 export default function HomePage() {
   return (
@@ -27,6 +35,17 @@ export default function HomePage() {
       </Card>
 
       <Button>Button</Button>
+
+      <Drawer>
+        <DrawerTrigger asChild>
+          <Button variant="outline">Open Drawer</Button>
+        </DrawerTrigger>
+        <DrawerContent>
+          <div className="h-[50vh] w-full"></div>
+        </DrawerContent>
+      </Drawer>
+
+      <Loader isLoading={false} />
     </main>
   );
 }

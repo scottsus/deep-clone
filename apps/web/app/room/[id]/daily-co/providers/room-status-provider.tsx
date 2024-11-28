@@ -33,7 +33,7 @@ export enum SpeakingExchangeState {
  */
 interface RoomStatusInterface {
   transcript: Message[];
-  handshakeIsCompleteRef: MutableRefObject<boolean>;
+  handshakeIsComplete: boolean;
   speakingExchangeState: SpeakingExchangeState;
   setSpeakingExchangeState: React.Dispatch<
     React.SetStateAction<SpeakingExchangeState>
@@ -53,7 +53,7 @@ export function RoomStatusProvider({
   const router = useRouter();
 
   const [transcript, setTranscript] = useState<Message[]>([]);
-  const handshakeIsCompleteRef = useRef(false);
+  const [handshakeIsComplete, setHandshakeIsComplete] = useState(false);
   const [speakingExchangeState, setSpeakingExchangeState] = useState(
     SpeakingExchangeState.IDLE,
   );
@@ -64,7 +64,7 @@ export function RoomStatusProvider({
       const packet: Packet = JSON.parse(ev.data);
       switch (packet.signal) {
         case ServerSendSignal.GUEST_JOINED_SUCCESS_ACK:
-          handshakeIsCompleteRef.current = true;
+          setHandshakeIsComplete(true);
           break;
 
         case ServerSendSignal.TRANSCRIPT_UPDATE:
@@ -101,7 +101,7 @@ export function RoomStatusProvider({
     <RoomStatusContext.Provider
       value={{
         transcript,
-        handshakeIsCompleteRef,
+        handshakeIsComplete,
         speakingExchangeState,
         setSpeakingExchangeState,
         sendAppMessage,

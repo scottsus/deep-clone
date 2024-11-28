@@ -107,7 +107,7 @@ class Clone(EventHandler):
             # guest has joined!
             logger.info("clone start 🏎️")
 
-            delay = 0.5
+            delay = 1.5
             await asyncio.sleep(delay)
 
             # send welcome message

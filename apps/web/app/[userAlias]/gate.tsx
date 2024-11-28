@@ -1,14 +1,14 @@
 "use client";
 
 import { Prisma } from "@prisma/client";
-import { Button } from "@repo/ui/button";
+import { Button } from "@repo/ui/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@repo/ui/card";
+} from "@repo/ui/components/ui/card";
 import { SparkleIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FormEvent } from "react";
