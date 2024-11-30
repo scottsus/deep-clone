@@ -111,7 +111,6 @@ class Clone(EventHandler):
             await asyncio.sleep(delay)
 
             # send welcome message
-            self.speak(self.intro)
 
             speech_time = time()
             self.transcript.append(
@@ -127,6 +126,7 @@ class Clone(EventHandler):
                     ),
                 )
             )
+            self.speak(self.intro)
             self.notify_speech_end()
 
             # back and forth talking
@@ -331,6 +331,7 @@ class Clone(EventHandler):
         """Callback from EventHandler"""
         try:
             participant_id = participant["id"]
+            self.guest_joined_event.set()
             self.call_client.set_audio_renderer(participant_id, self.on_audio_data)
             logger.info(f"guest with id [{participant_id}] has joined the room.")
 
@@ -341,13 +342,7 @@ class Clone(EventHandler):
     def on_app_message(self, message: Any, _: str):
         """Callback from EventHandler"""
         try:
-            if message["signal"] == ClientSendSignal.GUEST_JOINED_SUCCESS.name:
-                logger.critical("received client ack")
-                self.send_handshake_ack()
-                self.guest_joined_event.set()
-                logger.debug("guest joined successfully")
-
-            elif message["signal"] == ClientSendSignal.GUEST_SPEECH_END.name:
+            if message["signal"] == ClientSendSignal.GUEST_SPEECH_END.name:
                 if self.exchange_state == ExchangeState.LISTENING:
                     self.exchange_state = ExchangeState.SPEAKING
 

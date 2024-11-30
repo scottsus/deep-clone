@@ -59,7 +59,7 @@ export function MicrophoneFrequency({ audioTrack }: { audioTrack: any }) {
           const analyser = audioContext.createAnalyser();
           filter.connect(analyser);
           analyser.fftSize = 256;
-          analyser.smoothingTimeConstant = 0.9;
+          analyser.smoothingTimeConstant = 0.3;
           return analyser;
         });
 
@@ -139,12 +139,12 @@ export function MicrophoneFrequency({ audioTrack }: { audioTrack: any }) {
   }, [audioAnalyser, streamRef, audioTrack]);
 
   return (
-    <div className="mx-auto flex h-40 w-40 items-center justify-center rounded-full border-4 border-violet-400 p-4">
+    <div className="mx-auto flex h-40 w-40 items-center justify-center rounded-full p-4">
       <div className="flex h-full w-full items-center justify-center space-x-[6px]">
         {progressRange.reverse().map((progress, index) => (
           <div
             key={index}
-            className="w-3 rounded-md bg-violet-400 shadow-2xl"
+            className="w-3 rounded-md bg-green-300 shadow-2xl"
             style={{
               height: `${Math.min(Math.max(progress * 2.8, 8), 100)}%`,
             }}

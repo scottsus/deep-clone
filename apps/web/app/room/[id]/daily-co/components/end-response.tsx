@@ -1,8 +1,9 @@
 "use client";
 
 import { useAppMessage, useParticipantIds } from "@daily-co/daily-react";
+import { Button, cn } from "@repo/ui/components/ui/";
 import { ClientSendSignal, Packet } from "~/lib/types/packet";
-import { SpaceIcon } from "lucide-react";
+import { SendIcon, SpaceIcon } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 
 import {
@@ -51,16 +52,13 @@ export function EndResponseButton() {
   }, [speakingExchangeState, isDisabled, sendSpeechEnd]);
 
   return (
-    <div
-      className={`mx-auto mb-4 mt-auto flex cursor-pointer flex-row items-center space-x-2 rounded-xl bg-violet-400 px-4 py-2 transition-all hover:px-5 ${isDisabled ? "opacity-50" : "opacity-100"}`}
+    <Button
+      className={cn(isDisabled ? "opacity-40" : "opacity-100")}
       onClick={() => {
         !isDisabled && sendSpeechEnd();
       }}
     >
-      <p className="text-sm font-semibold text-white">End Response</p>
-      <div className="rounded-lg bg-gray-100/30 px-2 py-0.5 text-white">
-        <SpaceIcon />
-      </div>
-    </div>
+      <SendIcon />
+    </Button>
   );
 }
