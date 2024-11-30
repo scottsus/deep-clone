@@ -1,6 +1,5 @@
 import "./src/styles.css";
 
-export * from "./src/lib/utils";
 export * from "./src/components/ui/button";
 export * from "./src/components/ui/card";
 export * from "./src/components/ui/dialog";

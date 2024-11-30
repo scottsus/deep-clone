@@ -1,5 +1,3 @@
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
-import { Button } from "@repo/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import github from "public/github.svg";

@@ -1,4 +1,4 @@
-import { cn } from "@repo/ui/components/ui/";
+import { cn } from "@repo/ui/lib/utils";
 import Image from "next/image";
 
 import {

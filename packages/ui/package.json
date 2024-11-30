@@ -9,7 +9,8 @@
     "dist"
   ],
   "exports": {
-    "./components/ui/*": "./index.tsx"
+    "./components/ui/*": "./index.tsx",
+    "./lib/utils": "./src/lib/utils.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",

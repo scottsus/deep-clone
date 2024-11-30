@@ -1,19 +1,21 @@
 import { DailyCall } from "@daily-co/daily-js";
 import { DailyAudio } from "@daily-co/daily-react";
+import { Button } from "@repo/ui/components/ui/button";
 import {
-  Button,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+} from "@repo/ui/components/ui/dialog";
+import {
   Drawer,
   DrawerContent,
   DrawerTitle,
   DrawerTrigger,
-  Loader,
-} from "@repo/ui/components/ui/";
+} from "@repo/ui/components/ui/drawer";
+import { Loader } from "@repo/ui/components/ui/loader";
 import { motion } from "framer-motion";
 import { DoorOpenIcon, ScrollTextIcon } from "lucide-react";
 import { useRouter } from "next/navigation";

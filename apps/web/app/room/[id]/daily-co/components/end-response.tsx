@@ -1,7 +1,8 @@
 "use client";
 
 import { useAppMessage, useParticipantIds } from "@daily-co/daily-react";
-import { Button, cn } from "@repo/ui/components/ui/";
+import { Button } from "@repo/ui/components/ui/button";
+import { cn } from "@repo/ui/lib/utils";
 import { ClientSendSignal, Packet } from "~/lib/types/packet";
 import { SendIcon, SpaceIcon } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
