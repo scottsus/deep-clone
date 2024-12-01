@@ -70,8 +70,7 @@ export function RoomStatusProvider({
           if (message) {
             setTranscript((prev) => [...prev, message]);
           }
-          // @TODO: don't use this as end-state of clone
-          // transcript usually comes after the speech ends
+          // when a transcript arrives, that means clone is ready to speak
           setSpeakingExchangeState(SpeakingExchangeState.CLONE_SPEAKING);
           break;
 

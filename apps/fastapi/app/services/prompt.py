@@ -52,5 +52,5 @@ def construct_intro(first_name: str) -> str:
     return f"Yo what's up. I'm {first_name}'s AI. How can I help you today?"
 
 
-def construct_outro() -> str:
-    return f"Well then '*laughs*', thanks for trying out deep-clone, and getting to learn more about Scott. See you next time!"
+def construct_outro(first_name: str) -> str:
+    return f"Well then, thanks for trying out deep-clone, and getting to learn more about {first_name}. See you next time!"

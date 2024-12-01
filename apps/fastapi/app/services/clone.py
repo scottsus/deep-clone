@@ -53,10 +53,10 @@ async def run_clone(args: Tuple):
 
 
 class Clone(EventHandler):
-    def __init__(self, room_url: str, user_alias: str, db):
+    def __init__(self, room_url: str, guest_name: str, db):
         # Basic info
         self.clone_name = "Scott"
-        self.guest_name = "Bill"
+        self.guest_name = guest_name
 
         # Housekeeping
         self.db = db
@@ -89,7 +89,7 @@ class Clone(EventHandler):
 
         self.system_prompt = construct_system_prompt(self.clone_name)
         self.intro = construct_intro(self.clone_name)
-        self.outro = construct_outro()
+        self.outro = construct_outro(self.clone_name)
 
         self.stt: STT
         self.tts: TTS = ElevenLabs()
@@ -111,23 +111,7 @@ class Clone(EventHandler):
             await asyncio.sleep(delay)
 
             # send welcome message
-
-            speech_time = time()
-            self.transcript.append(
-                role=Role.CLONE,
-                time=speech_time,
-                content=self.intro,
-            )
-            self.send_transcript_message(
-                Packet(
-                    signal=ServerSendSignal.TRANSCRIPT_UPDATE,
-                    message=Message(
-                        role=Role.CLONE, time=speech_time, content=self.intro
-                    ),
-                )
-            )
-            self.speak(self.intro)
-            self.notify_speech_end()
+            self.update_transcript_and_speak(self.intro)
 
             # back and forth talking
             while self.is_in_conversation:
@@ -158,7 +142,6 @@ class Clone(EventHandler):
 
                     try:
                         self.stt = (executor.submit(self.stt.close)).result()
-                        # @TODO: should be message instead of segment
                         user_message = self.stt.get_result()
                         if not user_message:
                             user_message = "<silence>"
@@ -174,7 +157,7 @@ class Clone(EventHandler):
                         time=speech_time,
                         content=user_message,
                     )
-                    self.send_transcript_message(
+                    self._send_transcript_message(
                         Packet(
                             signal=ServerSendSignal.TRANSCRIPT_UPDATE,
                             message=Message(
@@ -187,32 +170,14 @@ class Clone(EventHandler):
                     # Respond
                     clone_response = self.think_of_response()
                     clone_message = clone_response.message
-                    # @TODO: update speaking status before actually speaking
-                    self.speak(clone_message)
-
-                    # Bookkeeping clone info
-                    speech_time = time()
-                    self.transcript.append(
-                        role=Role.CLONE,
-                        time=speech_time,
-                        content=clone_message,
-                    )
-                    self.send_transcript_message(
-                        Packet(
-                            signal=ServerSendSignal.TRANSCRIPT_UPDATE,
-                            message=Message(
-                                role=Role.CLONE, time=speech_time, content=clone_message
-                            ),
-                        )
-                    )
-                    self.notify_speech_end()
+                    self.update_transcript_and_speak(clone_message)
                     logger.info(f"[{self.clone_name}]: {clone_message}")
 
                     if clone_response.conversation_is_over:
                         self.is_in_conversation = False
 
             # end of conversation
-            # self.speak(self.outro)
+            self.update_transcript_and_speak(self.outro)
             self.notify_conversation_end()
 
             # post-processing and cleanup jobs
@@ -256,7 +221,19 @@ class Clone(EventHandler):
             logger.error(e)
             raise
 
-    def speak(self, text: str):
+    def update_transcript_and_speak(self, text: str):
+        speech_time = time()
+        self.transcript.append(role=Role.CLONE, time=speech_time, content=text)
+        self._send_transcript_message(
+            Packet(
+                signal=ServerSendSignal.TRANSCRIPT_UPDATE,
+                message=Message(role=Role.CLONE, time=speech_time, content=text),
+            )
+        )
+        self._speak(text)
+        self._notify_speech_end()
+
+    def _speak(self, text: str):
         logger.debug(f"generating TTS for '{text}'...")
 
         try:
@@ -283,7 +260,7 @@ class Clone(EventHandler):
             logger.error(e)
             raise
 
-    def send_transcript_message(self, packet: Packet):
+    def _send_transcript_message(self, packet: Packet):
         logger.debug(f"sending message: {packet.message}")
 
         try:
@@ -293,7 +270,7 @@ class Clone(EventHandler):
             logger.error(e)
             raise
 
-    def notify_speech_end(self):
+    def _notify_speech_end(self):
         logger.debug("notifying end of speech")
 
         try:

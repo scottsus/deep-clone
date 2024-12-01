@@ -3,6 +3,20 @@
 import { Prisma } from "@prisma/client";
 import { db } from "@repo/db";
 
+export async function getClone({ userAlias }: { userAlias: string }) {
+  try {
+    const clone = await db.clone.findFirst({
+      where: {
+        userAlias: userAlias,
+      },
+    });
+
+    return clone;
+  } catch (err) {
+    throw new Error("unable to find existing clone");
+  }
+}
+
 export async function createRoomInDb({
   userAlias,
   guest,
@@ -11,16 +25,9 @@ export async function createRoomInDb({
   guest: Prisma.GuestCreateInput;
 }) {
   try {
-    const clone = await db.clone.findFirst({
-      where: {
-        userAlias: userAlias,
-      },
-      select: {
-        id: true,
-      },
-    });
+    const clone = await getClone({ userAlias });
     if (!clone?.id) {
-      throw new Error("unable to find existing clone");
+      throw new Error("error getting clone while creating room");
     }
 
     let guestId = "";

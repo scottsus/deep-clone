@@ -1,7 +1,7 @@
 "use client";
 
-import { Prisma } from "@prisma/client";
-import { Button } from "@repo/ui/components/ui/button";
+import { Prisma, type Clone } from "@prisma/client";
+import { Button, Checkbox } from "@repo/ui/components/ui/button";
 import {
   Card,
   CardContent,
@@ -9,20 +9,27 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/components/ui/card";
-import { SparkleIcon } from "lucide-react";
+import { SparklesIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
+import { toast } from "sonner";
 
 import { createRoomInDb } from "./api";
 
-export default function Gate({ userAlias }: { userAlias: string }) {
+export default function Gate({ clone }: { clone: Clone }) {
   const router = useRouter();
+  const [acknowledged, setAcknowledged] = useState(false);
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const firstName: string = e.currentTarget.firstName.value ?? "John";
-    const lastName: string = e.currentTarget.lastName.value ?? "Doe";
+    if (!acknowledged) {
+      toast.error("Please acknowledge the terms first.");
+      return;
+    }
+
+    const firstName = e.currentTarget.firstName.value as string;
+    const lastName = e.currentTarget.lastName.value as string;
 
     const guest: Prisma.GuestCreateInput = {
       firstName,
@@ -30,7 +37,7 @@ export default function Gate({ userAlias }: { userAlias: string }) {
     };
 
     const roomId = await createRoomInDb({
-      userAlias,
+      userAlias: clone.userAlias,
       guest,
     });
 
@@ -38,15 +45,43 @@ export default function Gate({ userAlias }: { userAlias: string }) {
   };
 
   return (
-    <form className="flex w-4/5 flex-col gap-y-2" onSubmit={onSubmit}>
+    <form className="flex w-4/5 flex-col gap-y-2 md:w-1/3" onSubmit={onSubmit}>
       <Card>
         <CardHeader>
-          <CardTitle>Greetings from {userAlias} 👋</CardTitle>
-          <CardDescription>
-            This is an AI speaking with the voice of {userAlias}
+          <CardTitle>Hello there 👋</CardTitle>
+          <CardDescription className="flex flex-col gap-y-4 pb-3 pt-6">
+            <p>
+              {clone.firstName} greets you virtually through his AI voice-clone.
+            </p>
+            <p>
+              The agent you are about to converse with has the voice of{" "}
+              {clone.firstName}, which has been fine tuned with audio samples
+              provided by {clone.firstName}, with consent.
+            </p>
+            <p>
+              Moreover, this clone was fed with information by {clone.firstName}{" "}
+              and was programmed to talk about specific areas of interest,
+              mainly including 💼 professional experiences, 🪂 personal hobbies,
+              and information on 🍻 specific friends.
+            </p>
+            <p>
+              Obviously, nothing that the clone says is legally binding, and if
+              there are any errors, please take it with a grain of salt.
+            </p>
+
+            <div className="flex flex-row items-center gap-x-2">
+              <Checkbox
+                id="acknowledge"
+                checked={acknowledged}
+                onCheckedChange={(ack) =>
+                  setAcknowledged(ack === "indeterminate" ? false : ack)
+                }
+              />
+              <label htmlFor="acknowledge">C&apos;mon man I understand</label>
+            </div>
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col gap-y-3">
+        <CardContent className="flex flex-col gap-y-4">
           <div className="flex flex-row items-center gap-x-4">
             <div className="flex w-1/2 flex-col gap-y-2">
               <input
@@ -54,6 +89,7 @@ export default function Gate({ userAlias }: { userAlias: string }) {
                 id="firstName"
                 className="w-full rounded-md border border-gray-300 px-3 py-1 shadow-sm"
                 placeholder="First"
+                required
               />
             </div>
             <div className="flex w-1/2 flex-col gap-y-2">
@@ -62,11 +98,12 @@ export default function Gate({ userAlias }: { userAlias: string }) {
                 id="lastName"
                 className="w-full rounded-md border border-gray-300 px-3 py-1 shadow-sm"
                 placeholder="Last"
+                required
               />
             </div>
           </div>
           <Button className="flex items-center gap-x-1">
-            Let&apos;s chat <SparkleIcon size={16} />
+            Let&apos;s chat <SparklesIcon size={16} />
           </Button>
         </CardContent>
       </Card>
