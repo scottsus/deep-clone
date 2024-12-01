@@ -25,7 +25,7 @@ import { createRoom, dialClone } from "./api";
 import { Avatar } from "./components/avatar";
 import { EndResponseButton } from "./components/end-response";
 import { SoundWave } from "./components/sound-wave";
-import { Transcript } from "./transcript";
+import { Transcript } from "./components/transcript";
 
 export function DailyRoom({
   callObject,
@@ -38,6 +38,11 @@ export function DailyRoom({
   const [audioIsLoading, setAudioIsLoading] = useState(true);
 
   const leaveRoom = () => {
+    if (!callObject) {
+      return;
+    }
+    callObject.stopRecording();
+
     router.push("/call-complete");
   };
 
@@ -55,6 +60,9 @@ export function DailyRoom({
       })
       .then(async (url) => {
         await dialClone({ roomUrl: url });
+      })
+      .then(() => {
+        callObject.startRecording();
       })
       .then(() => {
         const DELAY = 3000;

@@ -1,7 +1,7 @@
 import { Role } from "@prisma/client";
 import { Message } from "~/lib/types/message";
 
-import { useRoomStatus } from "./providers/room-status-provider";
+import { useRoomStatus } from "../providers/room-status-provider";
 
 export function Transcript() {
   const { transcript } = useRoomStatus();
