@@ -13,6 +13,7 @@
     "@clerk/nextjs": "^6.3.4",
     "@repo/db": "*",
     "@repo/ui": "*",
+    "@ricky0123/vad-react": "^0.0.27",
     "lucide-react": "^0.460.0",
     "next": "^15.0.3",
     "react": "^18.3.1",
