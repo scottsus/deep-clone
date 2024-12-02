@@ -12,18 +12,18 @@
     "vercel-postbuild": "cp node_modules/@prisma/engines/*query* .vercel_build_output/functions/node/render/;cp prisma/schema.prisma .vercel_build_output/functions/node/render/"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.3.4",
+    "@clerk/nextjs": "^6.5.2",
     "@daily-co/daily-js": "^0.65.0",
     "@daily-co/daily-react": "^0.19.0",
     "@repo/db": "*",
     "@repo/ui": "*",
+    "@ricky0123/vad-react": "^0.0.27",
     "jotai": "^2.6.0",
     "lucide-react": "^0.460.0",
-    "next": "^14.1.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "next": "^15.0.3",
+    "react": "^19.0.0-rc.1",
+    "react-dom": "^19.0.0-rc.1",
     "recoil": "^0.7.7",
-    "sonner": "^1.7.0",
     "tailwindcss": "^3.4.15",
     "tailwindcss-animate": "^1.0.7"
   },
