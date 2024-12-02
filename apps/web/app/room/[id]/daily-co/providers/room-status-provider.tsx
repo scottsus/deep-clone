@@ -6,14 +6,7 @@ import {
   ServerSendSignal,
   type Packet,
 } from "~/lib/types/packet";
-import { useRouter } from "next/navigation";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, useCallback, useContext, useState } from "react";
 
 /**
  * Not to be confused with server-side ExchangeState,
@@ -48,13 +41,12 @@ export function RoomStatusProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const router = useRouter();
-
   const [transcript, setTranscript] = useState<Message[]>([]);
   const [handshakeIsComplete, setHandshakeIsComplete] = useState(false);
   const [speakingExchangeState, setSpeakingExchangeState] = useState(
     SpeakingExchangeState.IDLE,
   );
+  // @TODO: unused for now
   const [conversationIsOngoing, setConversationIsOngoing] = useState(true);
 
   const onAppMessage = useCallback((ev: DailyEventObjectAppMessage<any>) => {
@@ -87,12 +79,6 @@ export function RoomStatusProvider({
     }
   }, []);
   const sendAppMessage = useAppMessage({ onAppMessage });
-
-  useEffect(() => {
-    if (!conversationIsOngoing) {
-      router.push(`/call-complete`);
-    }
-  }, [conversationIsOngoing]);
 
   return (
     <RoomStatusContext.Provider

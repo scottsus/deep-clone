@@ -16,6 +16,7 @@ import {
   DrawerTrigger,
 } from "@repo/ui/components/ui/drawer";
 import { Loader } from "@repo/ui/components/ui/loader";
+import { useToast } from "@repo/ui/components/ui/use-toast";
 import { motion } from "framer-motion";
 import { DoorOpenIcon, ScrollTextIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -36,22 +37,20 @@ export function DailyRoom({
 }) {
   const router = useRouter();
   const [audioIsLoading, setAudioIsLoading] = useState(true);
+  const { toast } = useToast();
 
-  const leaveRoom = () => {
-    if (!callObject) {
-      return;
-    }
-    callObject.stopRecording();
-
+  function leaveRoom() {
     router.push("/call-complete");
-  };
+  }
 
   useEffect(() => {
     if (!callObject) {
       return;
     }
 
-    createRoom()
+    navigator.mediaDevices
+      .getUserMedia({ video: false, audio: true })
+      .then(() => createRoom())
       .then(async ({ url }) => {
         await callObject.join({ url: url, startVideoOff: true });
         setRoomUrl(url);
@@ -69,7 +68,30 @@ export function DailyRoom({
         const timeout = setTimeout(() => setAudioIsLoading(false), DELAY);
 
         return () => clearTimeout(timeout);
+      })
+      .catch((err) => {
+        if (err.name === "NotAllowedError") {
+          toast({
+            title: "Microphone access denied",
+            description:
+              "Unless you explicitly denied access, this usually happens on mobile devices where your browser actually does not have the necessary mic permissions. Please check your settings and try again.",
+          });
+          return;
+        }
+        toast({
+          title: "Error",
+          description: err as string,
+        });
       });
+
+    return () => {
+      if (!callObject) {
+        return;
+      }
+      callObject.stopRecording();
+      callObject.leave();
+      callObject.destroy();
+    };
   }, [callObject]);
 
   return (

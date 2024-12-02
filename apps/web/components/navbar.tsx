@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import github from "public/github.svg";
 
+// @TODO: use Shadcn
 export function Navbar() {
   return (
     <div className="flex w-5/6 items-center justify-between p-6">

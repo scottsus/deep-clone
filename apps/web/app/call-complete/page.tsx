@@ -50,9 +50,9 @@ export default function CallCompletePage() {
             <p>See you next time!</p>
             <p>Scott</p>
 
-            <Button className="mx-auto mt-6 w-full">
-              <Link href="/">Back to home</Link>
-            </Button>
+            <Link href="/" className="flex w-full justify-center">
+              <Button className="w-full md:w-1/2">Back to home</Button>
+            </Link>
           </CardDescription>
         </CardHeader>
       </Card>
