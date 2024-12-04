@@ -1,4 +1,3 @@
-import { db } from "@repo/db";
 import { redirect } from "next/navigation";
 
 import { getClone } from "./api";
@@ -9,7 +8,8 @@ export default async function UserAliasPage({
 }: {
   params: { userAlias: string };
 }) {
-  const clone = await getClone({ userAlias: params.userAlias });
+  const { userAlias } = await params;
+  const clone = await getClone({ userAlias: userAlias });
   if (!clone) {
     redirect("/error");
   }

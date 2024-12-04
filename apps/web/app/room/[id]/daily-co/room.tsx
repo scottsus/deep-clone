@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { createRoom, dialClone } from "./api";
+import { Audio } from "./components/audio";
 import { Avatar } from "./components/avatar";
 import { EndResponseButton } from "./components/end-response";
 import { SoundWave } from "./components/sound-wave";
@@ -98,6 +99,7 @@ export function DailyRoom({
     <div className="flex h-full w-4/5 flex-col items-center justify-center">
       <Loader isLoading={audioIsLoading} />
       <DailyAudio /> {/** <DailyAudio /> takes awhile to load */}
+      <Audio />
       {!audioIsLoading && (
         <motion.div
           className="flex flex-col items-center"

@@ -3,7 +3,7 @@
 import { useMicVAD, utils } from "@ricky0123/vad-react";
 import { useState } from "react";
 
-export const Demo = () => {
+export function Vad() {
   const [audioList, setAudioList] = useState<string[]>([]);
   const vad = useMicVAD({
     model: "v5",
@@ -34,6 +34,4 @@ export const Demo = () => {
       <button onClick={vad.toggle}>Toggle</button>
     </div>
   );
-};
-
-export default Demo;
+}

@@ -9,22 +9,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/components/ui/card";
+import { useToast } from "@repo/ui/components/ui/use-toast";
 import { SparklesIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
-import { toast } from "sonner";
 
 import { createRoomInDb } from "./api";
 
 export default function Gate({ clone }: { clone: Clone }) {
   const router = useRouter();
+  const { toast } = useToast();
   const [acknowledged, setAcknowledged] = useState(false);
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!acknowledged) {
-      toast.error("Please acknowledge the terms first.");
+      toast({ description: "Please acknowledge the terms first." });
       return;
     }
 
