@@ -17,6 +17,7 @@ export enum SpeakingExchangeState {
   GUEST_SPEAKING = "GUEST_SPEAKING",
   CLONE_THINKING = "CLONE_THINKING",
   CLONE_SPEAKING = "CLONE_SPEAKING",
+  CONVERSATION_ENDED = "CONVERSATION_ENDED",
 }
 
 /**
@@ -46,8 +47,6 @@ export function RoomStatusProvider({
   const [speakingExchangeState, setSpeakingExchangeState] = useState(
     SpeakingExchangeState.IDLE,
   );
-  // @TODO: unused for now
-  const [conversationIsOngoing, setConversationIsOngoing] = useState(true);
 
   const onAppMessage = useCallback((ev: DailyEventObjectAppMessage<any>) => {
     try {
@@ -71,7 +70,7 @@ export function RoomStatusProvider({
           break;
 
         case ServerSendSignal.CONVERSATION_END:
-          setConversationIsOngoing(false);
+          setSpeakingExchangeState(SpeakingExchangeState.CONVERSATION_ENDED);
           break;
       }
     } catch (err) {

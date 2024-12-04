@@ -9,27 +9,35 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/components/ui/card";
+import { useToast } from "@repo/ui/components/ui/use-toast";
 import { SparklesIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
-import { toast } from "sonner";
+import { FormEvent, useEffect, useState } from "react";
 
 import { createRoomInDb } from "./api";
 
 export default function Gate({ clone }: { clone: Clone }) {
   const router = useRouter();
+  const { toast } = useToast();
   const [acknowledged, setAcknowledged] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === "development") {
+      setAcknowledged(true);
+      setFirstName("Scott");
+      setLastName("Susanto");
+    }
+  }, []);
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!acknowledged) {
-      toast.error("Please acknowledge the terms first.");
+      toast({ description: "Please acknowledge the terms first." });
       return;
     }
-
-    const firstName = e.currentTarget.firstName.value as string;
-    const lastName = e.currentTarget.lastName.value as string;
 
     const guest: Prisma.GuestCreateInput = {
       firstName,
@@ -86,18 +94,20 @@ export default function Gate({ clone }: { clone: Clone }) {
             <div className="flex w-1/2 flex-col gap-y-2">
               <input
                 type="text"
-                id="firstName"
                 className="w-full rounded-md border border-gray-300 px-3 py-1 shadow-sm"
                 placeholder="First"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
                 required
               />
             </div>
             <div className="flex w-1/2 flex-col gap-y-2">
               <input
                 type="text"
-                id="lastName"
                 className="w-full rounded-md border border-gray-300 px-3 py-1 shadow-sm"
                 placeholder="Last"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
                 required
               />
             </div>

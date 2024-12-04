@@ -8,9 +8,9 @@ import {
   ToastTitle,
   ToastViewport,
 } from "@repo/ui/components/ui/toast";
-import { useToast } from "@repo/ui/hooks/use-toast";
+import { useToast } from "@repo/ui/components/ui/use-toast";
 
-export function Toaster({ duration = 5000 }: { duration?: number }) {
+export function Toaster() {
   const { toasts } = useToast();
 
   return (

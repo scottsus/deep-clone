@@ -1,4 +1,3 @@
-import { db } from "@repo/db";
 import { redirect } from "next/navigation";
 
 import { getClone } from "./api";
