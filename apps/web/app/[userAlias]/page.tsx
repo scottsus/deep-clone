@@ -8,8 +8,7 @@ export default async function UserAliasPage({
 }: {
   params: { userAlias: string };
 }) {
-  const { userAlias } = await params;
-  const clone = await getClone({ userAlias: userAlias });
+  const clone = await getClone({ userAlias: params.userAlias });
   if (!clone) {
     redirect("/error");
   }

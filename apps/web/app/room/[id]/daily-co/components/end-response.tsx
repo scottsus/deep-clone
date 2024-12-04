@@ -1,10 +1,11 @@
 "use client";
 
-import { useAppMessage, useParticipantIds } from "@daily-co/daily-react";
+import { useAppMessage } from "@daily-co/daily-react";
 import { Button } from "@repo/ui/components/ui/button";
 import { cn } from "@repo/ui/lib/utils";
+import { useMicVAD } from "@ricky0123/vad-react";
 import { ClientSendSignal, Packet } from "~/lib/types/packet";
-import { SendIcon, SpaceIcon } from "lucide-react";
+import { SendIcon } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 
 import {
@@ -13,10 +14,16 @@ import {
 } from "../providers/room-status-provider";
 
 export function EndResponseButton() {
-  const [participantId] = useParticipantIds({ filter: "remote" });
-
   const { speakingExchangeState, setSpeakingExchangeState } = useRoomStatus();
   const [isDisabled, setIsDisabled] = useState(true);
+
+  const _ = useMicVAD({
+    model: "v5",
+    onSpeechEnd: (_) => {
+      console.log("speech end");
+      sendSpeechEnd();
+    },
+  });
 
   const sendAppMessage = useAppMessage();
   const sendSpeechEnd = useCallback(() => {
@@ -24,9 +31,14 @@ export function EndResponseButton() {
       signal: ClientSendSignal.GUEST_SPEECH_END,
     };
     sendAppMessage(packet);
-  }, [participantId, sendAppMessage]);
+  }, [sendAppMessage]);
 
   useEffect(() => {
+    if (speakingExchangeState === SpeakingExchangeState.CONVERSATION_ENDED) {
+      setIsDisabled(true);
+      return;
+    }
+
     if (speakingExchangeState !== SpeakingExchangeState.GUEST_SPEAKING) {
       setIsDisabled(true);
     } else {
@@ -58,6 +70,7 @@ export function EndResponseButton() {
       onClick={() => {
         !isDisabled && sendSpeechEnd();
       }}
+      disabled={isDisabled}
     >
       <SendIcon />
     </Button>

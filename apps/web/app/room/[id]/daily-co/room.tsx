@@ -17,6 +17,7 @@ import {
 } from "@repo/ui/components/ui/drawer";
 import { Loader } from "@repo/ui/components/ui/loader";
 import { useToast } from "@repo/ui/components/ui/use-toast";
+import { cn } from "@repo/ui/lib/utils";
 import { motion } from "framer-motion";
 import { DoorOpenIcon, ScrollTextIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -28,6 +29,10 @@ import { Avatar } from "./components/avatar";
 import { EndResponseButton } from "./components/end-response";
 import { SoundWave } from "./components/sound-wave";
 import { Transcript } from "./components/transcript";
+import {
+  SpeakingExchangeState,
+  useRoomStatus,
+} from "./providers/room-status-provider";
 
 export function DailyRoom({
   callObject,
@@ -38,6 +43,7 @@ export function DailyRoom({
 }) {
   const router = useRouter();
   const [audioIsLoading, setAudioIsLoading] = useState(true);
+  const { speakingExchangeState } = useRoomStatus();
   const { toast } = useToast();
 
   function leaveRoom() {
@@ -99,7 +105,6 @@ export function DailyRoom({
     <div className="flex h-full w-4/5 flex-col items-center justify-center">
       <Loader isLoading={audioIsLoading} />
       <DailyAudio /> {/** <DailyAudio /> takes awhile to load */}
-      <Audio />
       {!audioIsLoading && (
         <motion.div
           className="flex flex-col items-center"
@@ -130,7 +135,15 @@ export function DailyRoom({
 
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="outline">
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      speakingExchangeState ===
+                        SpeakingExchangeState.CONVERSATION_ENDED
+                        ? "bg-red-500 text-white hover:bg-red-400 hover:text-white"
+                        : "",
+                    )}
+                  >
                     <DoorOpenIcon />
                   </Button>
                 </DialogTrigger>
