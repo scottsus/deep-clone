@@ -19,7 +19,7 @@ export function Transcript() {
             )}
             <div className="flex w-full flex-row">
               <div
-                className={`flex max-w-52 flex-row ${
+                className={`flex w-1/5 flex-row ${
                   m.role === Role.CLONE ? "mr-auto" : "ml-auto mr-0"
                 }`}
               >

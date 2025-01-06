@@ -8,14 +8,20 @@ export default async function UserAliasPage({
 }: {
   params: { userAlias: string };
 }) {
-  const clone = await getClone({ userAlias: params.userAlias });
-  if (!clone) {
-    redirect("/error");
-  }
+  const { userAlias } = params;
+  const clone = await getClone({ userAlias });
 
   return (
     <main className="flex size-full flex-1 flex-col items-center justify-center gap-y-6">
-      <Gate clone={clone} />
+      {clone ? (
+        <Gate clone={clone} />
+      ) : (
+        <h3>
+          Unable to find clone
+          <span className="text-red-400"> {userAlias} </span>☹ are you sure you
+          have the correct link?
+        </h3>
+      )}
     </main>
   );
 }

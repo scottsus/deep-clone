@@ -18,13 +18,13 @@ import {
 import { Loader } from "@repo/ui/components/ui/loader";
 import { useToast } from "@repo/ui/components/ui/use-toast";
 import { cn } from "@repo/ui/lib/utils";
+import { addUrlToRoomInDb } from "~/app/[userAlias]/api";
 import { motion } from "framer-motion";
 import { DoorOpenIcon, ScrollTextIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { createRoom, dialClone } from "./api";
-import { Audio } from "./components/audio";
 import { Avatar } from "./components/avatar";
 import { EndResponseButton } from "./components/end-response";
 import { SoundWave } from "./components/sound-wave";
@@ -35,9 +35,11 @@ import {
 } from "./providers/room-status-provider";
 
 export function DailyRoom({
+  roomId,
   callObject,
   setRoomUrl,
 }: {
+  roomId: string;
   callObject: DailyCall | null;
   setRoomUrl: (url: string) => void;
 }) {
@@ -65,6 +67,8 @@ export function DailyRoom({
         return url;
       })
       .then(async (url) => {
+        await addUrlToRoomInDb({ roomId, url });
+        console.log("added url to db:", url);
         await dialClone({ roomUrl: url });
       })
       .then(() => {

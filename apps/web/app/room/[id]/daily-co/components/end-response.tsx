@@ -6,12 +6,16 @@ import { cn } from "@repo/ui/lib/utils";
 import { useMicVAD } from "@ricky0123/vad-react";
 import { ClientSendSignal, Packet } from "~/lib/types/packet";
 import { SendIcon } from "lucide-react";
+import * as ort from "onnxruntime-web";
 import React, { useCallback, useEffect, useState } from "react";
 
 import {
   SpeakingExchangeState,
   useRoomStatus,
 } from "../providers/room-status-provider";
+
+// @TODO: suppress onnx warnings
+ort.env.logLevel = "error";
 
 export function EndResponseButton() {
   const { speakingExchangeState, setSpeakingExchangeState } = useRoomStatus();
@@ -20,7 +24,6 @@ export function EndResponseButton() {
   const _ = useMicVAD({
     model: "v5",
     onSpeechEnd: (_) => {
-      console.log("speech end");
       sendSpeechEnd();
     },
   });

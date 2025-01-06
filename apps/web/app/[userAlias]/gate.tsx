@@ -26,8 +26,8 @@ export default function Gate({ clone }: { clone: Clone }) {
   useEffect(() => {
     if (process.env.NODE_ENV === "development") {
       setAcknowledged(true);
-      setFirstName("Scott");
-      setLastName("Susanto");
+      setFirstName("Bill");
+      setLastName("Tester");
     }
   }, []);
 

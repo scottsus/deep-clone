@@ -6,7 +6,7 @@ import { useState } from "react";
 import { RoomStatusProvider } from "./providers/room-status-provider";
 import { DailyRoom } from "./room";
 
-export function DailyRoomWithProviders() {
+export function DailyRoomWithProviders({ roomId }: { roomId: string }) {
   const callObject = useCallObject({
     options: {
       showLocalVideo: false,
@@ -17,7 +17,11 @@ export function DailyRoomWithProviders() {
   return (
     <DailyProvider callObject={callObject} url={roomUrl}>
       <RoomStatusProvider>
-        <DailyRoom callObject={callObject} setRoomUrl={setRoomUrl} />
+        <DailyRoom
+          roomId={roomId}
+          callObject={callObject}
+          setRoomUrl={setRoomUrl}
+        />
       </RoomStatusProvider>
     </DailyProvider>
   );

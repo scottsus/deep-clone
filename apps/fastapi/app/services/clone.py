@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 import threading
 from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
@@ -7,6 +8,7 @@ from queue import Empty, Queue
 from time import time
 from typing import Any, Dict, Tuple
 
+import requests
 from app.db import get_db
 from app.lib.ai import LLM, Anthropic, OpenAI
 from app.lib.logger import get_logger
@@ -39,14 +41,21 @@ class ExchangeState(Enum):
     POST_PROCESSING = "post-processing"
 
 
-async def run_clone(args: Tuple):
-    # @TODO: pydantic?
-    room_url, user_alias = args
+async def run_clone(room_url: str):
 
     Daily.init()  # each process gets its own initializer
 
     async with get_db() as db:
-        clone = Clone(room_url, user_alias, db)
+        guest_name = "Unknown"
+        try:
+            room = await db.room.find_first(
+                where={"url": room_url}, include={"guest": True}
+            )
+            guest_name = f"{room.guest.firstName} {room.guest.lastName}"
+        except Exception as e:
+            logger.warn("unable to retrieve guest name")
+
+        clone = Clone(room_url, guest_name, db)
         await clone.run_to_completion()
 
     logger.debug("end of clone lifecycle.")
@@ -182,6 +191,7 @@ class Clone(EventHandler):
 
             # post-processing and cleanup jobs
             await self.transcript.upload_transcript()
+            await self.send_success_email_notification()
 
             logger.info("conversation has ended.")
 
@@ -296,6 +306,19 @@ class Clone(EventHandler):
         except Exception as e:
             logger.error(e)
             raise
+
+    def send_success_email_notification(self):
+        try:
+            email_server_url = os.getenv("EMAIL_SERVER_URL")
+            res = requests.post(
+                f"{email_server_url}/notifications/email",
+                payload={"guest_name": self.guest_name},
+            )
+            res.raise_for_status()
+            logger.info("sent success notification email")
+
+        except requests.exceptions.RequestException as e:
+            logger.error(f"failed to send email notification")
 
     def teardown(self):
         # self.shutdown_event.wait()

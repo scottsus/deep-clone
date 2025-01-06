@@ -40,21 +40,22 @@ class Transcript:
         message = Message(role=role, time=time, content=content)
         self.messages.append(message)
 
-    # @TODO: upload all
     async def upload_transcript(self, message: Message):
-        logger.info("uploading transcript...")
-        try:
-            new_message = await self.db.message.create(
-                data={
-                    "conversationId": self.room_id,
-                    "role": message.role.value,
-                    "startTime": message.time,
-                    "content": message.content,
-                }
-            )
-            logger.info("transcript successfully uploaded")
+        pass
+        # @TODO: upload transcript
+        # logger.info("uploading transcript...")
+        # try:
+        #     new_message = await self.db.message.create(
+        #         data={
+        #             "conversationId": self.room_id,
+        #             "role": message.role.value,
+        #             "startTime": message.time,
+        #             "content": message.content,
+        #         }
+        #     )
+        #     logger.info("transcript successfully uploaded")
 
-            return new_message
+        #     return new_message
 
-        except Exception as e:
-            logger.warn(f"did not save {message}: {e}")
+        # except Exception as e:
+        #     logger.warn(f"did not save {message}: {e}")

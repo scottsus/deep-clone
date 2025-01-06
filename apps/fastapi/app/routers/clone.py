@@ -16,11 +16,10 @@ async def dial_clone(req: Request, bg_tasks: BackgroundTasks):
 
     data = await req.json()
     room_url = data.get("room_url")
-    guest_name = data.get("guest_name")
 
     async def multiprocess_runner():
         async with Pool() as pool:
-            await pool.map(run_clone, [(room_url, guest_name)])
+            await pool.map(run_clone, [room_url])
 
     bg_tasks.add_task(multiprocess_runner)
 

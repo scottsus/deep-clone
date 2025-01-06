@@ -1,34 +1,40 @@
 model Clone {
     id            String @id @default(uuid())
-    firstName     String
-    lastName      String
-    userAlias     String
-    knowledgeBank String
+    firstName     String @map("first_name")
+    lastName      String @map("last_name")
+    userAlias     String @map("user_alias")
+    knowledgeBank String @map("knowledge_bank")
     intro         String
     outro         String
     Room          Room[]
+
+    @@map("clones")
 }
 
 model Guest {
     id              String  @id @default(uuid())
-    firstName       String
-    lastName        String
+    firstName       String  @map("first_name")
+    lastName        String  @map("last_name")
     email           String?
-    linkedInProfile String?
+    linkedInProfile String? @map("linkedin_profile")
     relation        String?
     Room            Room[]
+
+    @@map("guests")
 }
 
 model Room {
     id       String    @id @default(uuid())
-    cloneId  String
-    guestId  String
+    url      String?
+    cloneId  String    @map("clone_id")
+    guestId  String    @map("guest_id")
     clone    Clone     @relation(fields: [cloneId], references: [id])
     guest    Guest     @relation(fields: [guestId], references: [id])
     messages Message[]
 
     @@index([cloneId])
     @@index([guestId])
+    @@map("rooms")
 }
 
 model Message {
@@ -40,6 +46,7 @@ model Message {
     room    Room   @relation(fields: [roomId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     @@index([roomId])
+    @@map("messages")
 }
 
 enum Role {

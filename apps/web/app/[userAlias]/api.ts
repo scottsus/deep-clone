@@ -77,3 +77,26 @@ export async function createRoomInDb({
     console.error("createRoomInDb:", err);
   }
 }
+
+export async function addUrlToRoomInDb({
+  roomId,
+  url,
+}: {
+  roomId: string;
+  url: string;
+}) {
+  try {
+    const room = await db.room.update({
+      data: {
+        url,
+      },
+      where: {
+        id: roomId,
+      },
+    });
+
+    return room;
+  } catch (err) {
+    console.error("addUrlToRoomInDb:", err);
+  }
+}

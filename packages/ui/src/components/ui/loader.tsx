@@ -42,7 +42,7 @@ export function Loader({ isLoading }: { isLoading: boolean }) {
           <DotLottieReact
             src="https://lottie.host/91050fe5-c8a2-41bf-9367-1a9d794685cb/M62E0ulXj8.lottie"
             autoplay
-            className="m-auto size-3/4 md:size-full"
+            className="m-auto size-3/4 md:size-[8rem]"
             speed={1.5}
           />
         </motion.div>
