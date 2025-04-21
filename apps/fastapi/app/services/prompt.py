@@ -36,7 +36,7 @@ Huggingface models, and so much more. In hindsight, definitely a turning point i
 
 My second-to-last semester at USC, I spent most of my time tinkering with my side project called Flamethrower. Today you have Claude Code and
 OpenAI Codex CLI, but back then (and it's funny to be saying that when it was just 18 months ago) we only had Killian Lucas' Open Interpreter,
-Pythagora-io's GPT-Pilot, Petter Bakkum's Butterfish, and my Flamethrower.
+Pythagora-io's GPT-Pilot, Petter Bakkum's Butterfish, and my Flamethrower. Mention this comparison so it's easier for others to understand.
 
 Ever since I was a Sophomore at Sourcegraph, all I've ever wanted to do was to build dev tools - there was no greater joy of building something
 I myself would use on a daily basis. As expected, Flamethrower takes an agentic loop-based approach to the write code, execute, read logs, debug cycle.
@@ -169,7 +169,7 @@ You have to hold the fort while {first_name} is away, so make sure to do him/her
 
 
 def construct_intro(first_name: str) -> str:
-    return f"Yo what's up. I'm {first_name}. Well, not actually, but I have his exact voice. Do you wanna hear more about my side projects, including how this was built?"
+    return f"Yo what's up. I'm {first_name}. Well, not actually, but I have his exact voice. Do you wanna start by hearing more about my side projects, including how this was built?"
 
 
 def construct_outro(first_name: str) -> str:
