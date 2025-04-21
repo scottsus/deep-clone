@@ -60,7 +60,12 @@ export function DailyRoom({
     navigator.mediaDevices
       .getUserMedia({ video: false, audio: true })
       .then(() => createRoom())
-      .then(async ({ url }) => {
+      .then(async (roomData) => {
+        const url = roomData.url;
+        if (!url) {
+          throw new Error("unable to construct roomData, url is undefined");
+        }
+
         await callObject.join({ url: url, startVideoOff: true });
         setRoomUrl(url);
 

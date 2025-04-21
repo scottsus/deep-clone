@@ -6,14 +6,13 @@ export async function createRoom() {
     throw new Error("NEXT_PUBLIC_DAILY_API_KEY not set");
   }
 
-  const EXPIRES_AFTER_2_HOURS = 2 * 60 * 60;
+  const EXPIRES_AFTER_1_HOUR = 60 * 60;
 
   const body = JSON.stringify({
     properties: {
       enable_recording: "cloud",
-      exp: EXPIRES_AFTER_2_HOURS,
       eject_at_room_exp: true,
-      eject_after_elapsed: EXPIRES_AFTER_2_HOURS,
+      eject_after_elapsed: EXPIRES_AFTER_1_HOUR,
     },
   });
   const res = await fetch("https://api.daily.co/v1/rooms", {
