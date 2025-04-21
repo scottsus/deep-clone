@@ -88,7 +88,7 @@ class OpenAI(LLM):
         )
         self.system_prompt = system_prompt
         self.default_model = "gpt-4o"
-        self.max_tokens = 4096
+        self.max_tokens = 16_384
 
     def respond(self, messages: List[Message]) -> str:
         res = self.client.chat.completions.create(
@@ -100,12 +100,12 @@ class OpenAI(LLM):
         return res.choices[0].message.content
 
     def get_json(self, messages: List[Message], schema: type[BaseModel]):
-
         res = self.client.beta.chat.completions.parse(
             messages=[{"role": "system", "content": self.system_prompt}] + messages,
             model=self.default_model,
             max_tokens=self.max_tokens,
             response_format=schema,
+            timeout=8,
         )
 
         return res.choices[0].message.parsed
