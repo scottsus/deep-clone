@@ -33,3 +33,9 @@ Dockerized FastAPI app. Makes calls to various AI providers like OpenAI for GPT 
 ### `packages/database`
 
 Use Postgres - for obvious reasons, and Prisma ORM because it offers both node and python clients, so the same schema can be reused across multiple packages.
+
+## Email notification shenanigans
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/9b32d886-90ab-43b3-ad3a-26c020a9dd0d" width="300">
+</p>
+
