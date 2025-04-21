@@ -70,6 +70,7 @@ class Clone(EventHandler):
 
         # Housekeeping
         self.db = db
+        self.room_url = room_url
 
         # Initialize the call client
         self.call_client = CallClient(event_handler=self)
@@ -316,7 +317,7 @@ class Clone(EventHandler):
             email_server_url = os.getenv("EMAIL_SERVER_URL")
             res = requests.post(
                 f"{email_server_url}/api/notifications/email",
-                json={"guestName": self.guest_name},
+                json={"guestName": self.guest_name, "roomUrl": self.room_url},
             )
             res.raise_for_status()
             logger.info("sent success notification email")

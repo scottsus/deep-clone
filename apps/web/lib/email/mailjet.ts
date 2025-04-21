@@ -8,7 +8,15 @@ if (!apiKey || !apiSecret) {
 
 const mailjet = new Client({ apiKey, apiSecret });
 
-export async function sendEmail({ guestName }: { guestName: string }) {
+export async function sendEmail({
+  guestName,
+  roomUrl,
+}: {
+  guestName: string;
+  roomUrl: string;
+}) {
+  const roomId = roomUrl.split("/").pop();
+
   const result = await mailjet.post("send", { version: "v3.1" }).request({
     Messages: [
       {
@@ -23,7 +31,7 @@ export async function sendEmail({ guestName }: { guestName: string }) {
           },
         ],
         Subject: `🎙️ ${guestName} just tried out Deep Clone!`,
-        HTMLPart: `${guestName} just tried out Deep Clone. See <a>https://dashboard.daily.co/recordings</a>`,
+        HTMLPart: `${guestName} just tried out Deep Clone. See <a>https://dashboard.daily.co/recordings</a> with Room [${roomId}]`,
       },
     ],
   });
