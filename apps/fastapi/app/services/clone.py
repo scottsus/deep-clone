@@ -191,10 +191,10 @@ class Clone(EventHandler):
             self.update_transcript_and_speak(self.outro)
             self.notify_conversation_end()
 
-            # TODO: upload transcript and send email
             # post-processing and cleanup jobs
+            # TODO: upload transcript
             # await self.transcript.upload_transcript()
-            # await self.send_success_email_notification()
+            self.send_success_email_notification()
 
             logger.info("conversation has ended.")
 
@@ -315,8 +315,8 @@ class Clone(EventHandler):
         try:
             email_server_url = os.getenv("EMAIL_SERVER_URL")
             res = requests.post(
-                f"{email_server_url}/notifications/email",
-                payload={"guest_name": self.guest_name},
+                f"{email_server_url}/api/notifications/email",
+                json={"guestName": self.guest_name},
             )
             res.raise_for_status()
             logger.info("sent success notification email")
