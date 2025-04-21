@@ -6,7 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
 from queue import Empty, Queue
 from time import time
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, List, Tuple
 
 import requests
 from app.db import get_db
@@ -15,6 +15,7 @@ from app.lib.logger import get_logger
 from app.lib.types.message import Message
 from app.lib.types.packet import ClientSendSignal, Packet, ServerSendSignal
 from app.services.prompt import (
+    construct_error,
     construct_intro,
     construct_outro,
     construct_system_prompt,
@@ -99,6 +100,7 @@ class Clone(EventHandler):
         self.system_prompt = construct_system_prompt(self.clone_name)
         self.intro = construct_intro(self.clone_name)
         self.outro = construct_outro(self.clone_name)
+        self.error = construct_error()
 
         self.stt: STT
         self.tts: TTS = ElevenLabs()
@@ -178,9 +180,9 @@ class Clone(EventHandler):
 
                     # Respond
                     clone_response = self.think_of_response()
-                    clone_message = clone_response.message
-                    self.update_transcript_and_speak(clone_message)
-                    logger.info(f"[{self.clone_name}]: {clone_message}")
+                    for clone_message in clone_response.messages:
+                        self.update_transcript_and_speak(clone_message)
+                        logger.info(f"[{self.clone_name}]: {clone_message}")
 
                     if clone_response.conversation_is_over:
                         self.is_in_conversation = False
@@ -189,14 +191,16 @@ class Clone(EventHandler):
             self.update_transcript_and_speak(self.outro)
             self.notify_conversation_end()
 
+            # TODO: upload transcript and send email
             # post-processing and cleanup jobs
-            await self.transcript.upload_transcript()
-            await self.send_success_email_notification()
+            # await self.transcript.upload_transcript()
+            # await self.send_success_email_notification()
 
             logger.info("conversation has ended.")
 
         except Exception as e:
             logger.error(f"root clone exception: {e}")
+            self.update_transcript_and_speak(self.error)
             pass  # do not propagate!
 
         finally:
@@ -205,7 +209,7 @@ class Clone(EventHandler):
 
     class CloneResponse(BaseModel):
         conversation_is_over: bool
-        message: str
+        messages: List[str]
 
     def think_of_response(self) -> "CloneResponse":
         logger.debug("thinking of a response...")
