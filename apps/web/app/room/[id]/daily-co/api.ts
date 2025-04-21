@@ -7,10 +7,12 @@ export async function createRoom() {
   }
 
   const EXPIRES_AFTER_1_HOUR = 60 * 60;
+  const expTimestamp = Math.floor(Date.now() / 1000) + EXPIRES_AFTER_1_HOUR;
 
   const body = JSON.stringify({
     properties: {
       enable_recording: "cloud",
+      exp: expTimestamp,
       eject_at_room_exp: true,
       eject_after_elapsed: EXPIRES_AFTER_1_HOUR,
     },
@@ -24,6 +26,7 @@ export async function createRoom() {
   });
 
   const roomData = await res.json();
+  console.log(roomData);
 
   return roomData;
 }
